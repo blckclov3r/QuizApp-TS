@@ -1,6 +1,4 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
+import AppContext, { ContextProps } from "@/components/AppContext";
 import styles from "@/styles/Home.module.css";
 import {
   Container,
@@ -13,8 +11,9 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { FormEvent, useState } from "react";
 import axios from "axios";
+import Head from "next/head";
+import { FormEvent, useContext } from "react";
 
 // This gets called on every request
 export async function getServerSideProps({ req, res }: any) {
@@ -30,38 +29,16 @@ export async function getServerSideProps({ req, res }: any) {
 }
 
 export default function Home(props: any) {
-  const [category, setCategory] = useState<string>();
-  const [difficulty, setDifficulty] = useState<string>();
-  const [type, setType] = useState<string>();
-
-  console.log("@@", category);
-  console.log("@@props", props);
-
-  const difficulties = [
-    {
-      id: 1,
-      name: "Easy",
-    },
-    {
-      id: 2,
-      name: "Medium",
-    },
-    {
-      id: 3,
-      name: "Hard",
-    },
-  ];
-
-  const types = [
-    {
-      id: 1,
-      name: "Multiple",
-    },
-    {
-      id: 2,
-      name: "True /False",
-    },
-  ];
+  const {
+    category,
+    setCategory,
+    difficulty,
+    setDifficulty,
+    type,
+    setType,
+    difficulties,
+    types,
+  } = useContext<ContextProps>(AppContext);
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
@@ -92,7 +69,7 @@ export default function Home(props: any) {
                     value={category}
                     label="Categories"
                     onChange={(e) => {
-                      setCategory(e.target.value);
+                      setCategory?.(e.target.value);
                     }}
                   >
                     {props?.categories?.map((item: any) => (
@@ -115,7 +92,7 @@ export default function Home(props: any) {
                     value={difficulty}
                     label="Difficulties"
                     onChange={(e) => {
-                      setDifficulty(e.target.value);
+                      setDifficulty?.(e.target.value);
                     }}
                   >
                     {difficulties?.map((item: any) => (
@@ -136,7 +113,7 @@ export default function Home(props: any) {
                     value={type}
                     label="Type"
                     onChange={(e) => {
-                      setType(e.target.value);
+                      setType?.(e.target.value);
                     }}
                   >
                     {types?.map((item: any) => (
