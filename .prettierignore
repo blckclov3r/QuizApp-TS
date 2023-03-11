@@ -3,3 +3,5 @@ node_modules
 *.lock
 .gitignore
 .next
+next.config.js
+*.js
