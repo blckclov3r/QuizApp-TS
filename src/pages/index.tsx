@@ -1,7 +1,6 @@
 import AppContext, { ContextProps } from "@/components/AppContext";
 import styles from "@/styles/Home.module.css";
 import {
-  Container,
   Typography,
   Grid,
   FormControl,
@@ -14,13 +13,11 @@ import {
 import axios from "axios";
 import Head from "next/head";
 import { FormEvent, useContext } from "react";
+import { useRouter } from "next/router";
 
-// This gets called on every request
-export async function getServerSideProps({ req, res }: any) {
+export async function getServerSideProps() {
   const response = await axios(`https://opentdb.com/api_category.php`);
   const categories = await response.data;
-
-  // Pass data to the page via props
   return {
     props: {
       categories: categories?.trivia_categories,
@@ -38,11 +35,18 @@ export default function Home(props: any) {
     setType,
     difficulties,
     types,
+    amount,
+    setAmount,
+    questions,
   } = useContext<ContextProps>(AppContext);
+  const router = useRouter();
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
-    alert(0);
+    const fillAllFields = [category, difficulty, type, amount].every(Boolean);
+    if (fillAllFields && questions?.results.length > 0) {
+      router.push(`/questions`);
+    }
   };
 
   return (
@@ -54,92 +58,99 @@ export default function Home(props: any) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <Container>
-          <Typography variant={"h1"}>Quiz App</Typography>
-          <form onSubmit={submitHandler}>
-            <Grid container>
-              <Grid item xs={8} sx={{ mt: 4 }}>
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Categories
-                  </InputLabel>
-                  <Select
-                    labelId="categories-label-id"
-                    id="categories-id"
-                    value={category}
-                    label="Categories"
-                    onChange={(e) => {
-                      setCategory?.(e.target.value);
-                    }}
-                  >
-                    {props?.categories?.map((item: any) => (
-                      <MenuItem value={item?.id} key={item?.id}>
-                        {item?.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={8} sx={{ mt: 4 }}>
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Difficulty
-                  </InputLabel>
-                  <Select
-                    labelId="difficulty-label-id"
-                    id="difficulty-id"
-                    value={difficulty}
-                    label="Difficulties"
-                    onChange={(e) => {
-                      setDifficulty?.(e.target.value);
-                    }}
-                  >
-                    {difficulties?.map((item: any) => (
-                      <MenuItem value={item?.id} key={item?.id}>
-                        {item?.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={8} sx={{ mt: 4 }}>
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                  <Select
-                    labelId="type-label-id"
-                    id="type-id"
-                    value={type}
-                    label="Type"
-                    onChange={(e) => {
-                      setType?.(e.target.value);
-                    }}
-                  >
-                    {types?.map((item: any) => (
-                      <MenuItem value={item?.id} key={item?.id}>
-                        {item?.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={8} sx={{ mt: 4 }}>
-                <TextField
-                  type="number"
-                  id="outlined-basic"
-                  fullWidth
-                  label="Amount of Questions"
-                  variant="outlined"
-                />
-              </Grid>
+        <Typography variant={"h1"}>Quiz App</Typography>
+        <form onSubmit={submitHandler}>
+          <Grid container>
+            <Grid item xs={8} sx={{ mt: 4 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Categories
+                </InputLabel>
+                <Select
+                  labelId="categories-label-id"
+                  id="categories-id"
+                  value={category}
+                  label="Categories"
+                  onChange={(e) => {
+                    setCategory?.(e.target.value);
+                  }}
+                >
+                  {props?.categories?.map((item: any) => (
+                    <MenuItem value={item?.id} key={item?.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
-            <Button type={"submit"} variant="contained" sx={{ mt: 4 }}>
-              Get Started...
-            </Button>
-          </form>
-        </Container>
+
+            <Grid item xs={8} sx={{ mt: 4 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Difficulty
+                </InputLabel>
+                <Select
+                  labelId="difficulty-label-id"
+                  id="difficulty-id"
+                  value={difficulty}
+                  label="Difficulties"
+                  onChange={(e) => {
+                    setDifficulty?.(e.target.value);
+                  }}
+                >
+                  {difficulties?.map((item: any) => (
+                    <MenuItem value={item?.id} key={item?.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={8} sx={{ mt: 4 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                <Select
+                  labelId="type-label-id"
+                  id="type-id"
+                  value={type}
+                  label="Type"
+                  onChange={(e) => {
+                    setType?.(e.target.value);
+                  }}
+                >
+                  {types?.map((item: any) => (
+                    <MenuItem value={item?.id} key={item?.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={8} sx={{ mt: 4 }}>
+              <TextField
+                type="number"
+                id="outlined-basic"
+                fullWidth
+                label="Amount of Questions"
+                variant="outlined"
+                value={amount}
+                onChange={(e) => {
+                  setAmount?.(e.target.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+          {/* <Link href="/questions" passHref legacyBehavior>
+            <Button variant="contained" sx={{ mt: 4 }}>
+                Get Started...
+              </Button>
+          </Link> */}
+          <Button type={"submit"} variant="contained" sx={{ mt: 4 }}>
+            Get Started...
+          </Button>
+        </form>
       </main>
     </>
   );
