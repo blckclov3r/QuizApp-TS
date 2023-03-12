@@ -1,11 +1,18 @@
 import AppContext from "@/components/AppContext";
-import { getQuestionPath } from "@/const";
+import { BASEPATH } from "@/const";
 import "@/styles/globals.css";
 import { Container } from "@mui/material";
 import axios from "axios";
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+
+const getQuestionPath = ({ amount, category, difficulty, type }: any) => {
+  return (
+    BASEPATH +
+    `/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`
+  );
+};
 
 export default function App({ Component, pageProps }: AppProps) {
   const [category, setCategory] = useState<string>("");
@@ -15,8 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
   const [questions, setQuestions] = useState<any | null>();
-
-  console.log("@@questions", questions);
+  const [questionUrl, setQuestionUrl] = useState<string>("");
   const difficulties = [
     {
       id: "easy",
@@ -43,8 +49,6 @@ export default function App({ Component, pageProps }: AppProps) {
     },
   ];
 
-  const questionUrl = getQuestionPath({ amount, category, difficulty, type });
-
   const fetchQuestions = async () => {
     const response = await axios.get(questionUrl);
     return response?.data;
@@ -54,11 +58,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const fillAllFields = [category, difficulty, type, amount].every(Boolean);
-    console.log("@@FILLALLFIELDS", fillAllFields);
-    if (fillAllFields && !questions) {
+    if (fillAllFields) {
+      setQuestionUrl(getQuestionPath({ amount, category, difficulty, type }));
       setQuestions(response);
     }
-  }, [category, difficulty, type, amount, response]);
+  }, [category, difficulty, type, amount, response, questionUrl]);
 
   return (
     <AppContext.Provider

@@ -4,18 +4,13 @@ import React, { useContext, useEffect, useState } from "react";
 import { parseEntities } from "parse-entities";
 
 const Home = () => {
-  const {
-    questionIndex,
-    setQuestionIndex,
-    score,
-    setScore,
-    questions,
-    setQuestions,
-  } = useContext(AppContext);
+  const { questionIndex, setQuestionIndex, score, setScore, questions } =
+    useContext(AppContext);
 
   const getRandomInt = (max: number) => {
     return Math.floor(Math.random() * Math.floor(max));
   };
+
   let options = questions?.results[
     questionIndex ?? 0
   ]?.incorrect_answers?.filter(
@@ -28,7 +23,8 @@ const Home = () => {
   );
 
   const handleClickAnswer = (e: any) => {
-    alert(e.target.textContent);
+    e.preventDefault();
+    // alert(e.target.textContent);
     const question = questions?.results[questionIndex ?? 0];
     if (question?.correct_answer === e.target.textContent) {
       setScore?.((prev) => prev + 1);
@@ -37,6 +33,7 @@ const Home = () => {
       setQuestionIndex?.((prevState) => (prevState += 1));
     }
   };
+
   return (
     <>
       <Typography variant="h1">Question {(questionIndex ?? 0) + 1}</Typography>
@@ -48,7 +45,7 @@ const Home = () => {
           <Button
             variant="contained"
             onClick={handleClickAnswer}
-          >{`${answer}`}</Button>
+          >{`${parseEntities(answer)}`}</Button>
         </Box>
       ))}
 

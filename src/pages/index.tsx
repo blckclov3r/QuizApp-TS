@@ -43,11 +43,10 @@ export default function Home(props: any) {
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
-    const fillAllFields = [category, difficulty, type, amount].every(Boolean);
-    if (fillAllFields && questions?.results.length > 0) {
-      router.push(`/questions`);
-    }
+    router.push(`/questions`);
   };
+
+  const disabled = [category, type, difficulty, amount].every(Boolean);
 
   return (
     <>
@@ -142,12 +141,12 @@ export default function Home(props: any) {
               />
             </Grid>
           </Grid>
-          {/* <Link href="/questions" passHref legacyBehavior>
-            <Button variant="contained" sx={{ mt: 4 }}>
-                Get Started...
-              </Button>
-          </Link> */}
-          <Button type={"submit"} variant="contained" sx={{ mt: 4 }}>
+          <Button
+            disabled={!disabled}
+            type={"submit"}
+            variant="contained"
+            sx={{ mt: 4 }}
+          >
             Get Started...
           </Button>
         </form>
